@@ -1,0 +1,14 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Maven / Build
+target/
+build/
+
+# Logs et fichiers système
+*.log
+.DS_Store
+Thumbs.db
