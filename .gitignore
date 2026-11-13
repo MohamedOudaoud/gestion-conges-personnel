@@ -19,3 +19,4 @@ Thumbs.db
 *.log
 
 .smarttomcat/
+src/main/resources/hibernate.cfg.xml
