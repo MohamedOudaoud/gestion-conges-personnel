@@ -6,7 +6,7 @@ public class PasswordTest {
 
     public static void main(String[] args) {
 
-        String password = "Test123!";
+        String password = "Test1234";
 
         String hash = PasswordUtil.hashPassword(password);
 
