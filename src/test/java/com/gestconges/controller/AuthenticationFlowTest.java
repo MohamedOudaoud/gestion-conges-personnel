@@ -229,6 +229,50 @@ class AuthenticationFlowTest {
     }
 
     @Test
+    void filterRejectsLeaveTypeManagementForNonAdmin() throws Exception {
+        TestSession session = new TestSession(
+                Map.of("employeId", 42L, "employeRole", Role.RESPONSABLE.name())
+        );
+        Fixture fixture = new Fixture(
+                "/admin/leave-types",
+                "GET",
+                session,
+                Map.of()
+        );
+
+        new AuthFilter().doFilter(
+                fixture.request,
+                fixture.response,
+                fixture.chain
+        );
+
+        assertEquals(HttpServletResponse.SC_FORBIDDEN, fixture.errorStatus);
+        assertFalse(fixture.chainCalled);
+    }
+
+    @Test
+    void filterAllowsLeaveTypeManagementForAdmin() throws Exception {
+        TestSession session = new TestSession(
+                Map.of("employeId", 42L, "employeRole", Role.ADMIN.name())
+        );
+        Fixture fixture = new Fixture(
+                "/admin/leave-types/status",
+                "POST",
+                session,
+                Map.of()
+        );
+
+        new AuthFilter().doFilter(
+                fixture.request,
+                fixture.response,
+                fixture.chain
+        );
+
+        assertTrue(fixture.chainCalled);
+        assertNull(fixture.errorStatus);
+    }
+
+    @Test
     void dashboardEntryRedirectsToRoleSpecificDestination() throws Exception {
         TestSession session = new TestSession(
                 Map.of("employeId", 42L, "employeRole", Role.RESPONSABLE.name())

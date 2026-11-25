@@ -21,6 +21,11 @@
                 Gérer les départements
             </a>
         </p>
+        <p>
+            <a href="${pageContext.request.contextPath}/admin/leave-types">
+                Gérer les types de congé
+            </a>
+        </p>
         <form action="${pageContext.request.contextPath}/logout" method="post">
             <button type="submit">Se déconnecter</button>
         </form>
