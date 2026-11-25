@@ -112,4 +112,14 @@ public class EmployeDAO extends GenericDAO<Employe> {
                 .setParameter("role", Role.RESPONSABLE)
                 .getResultList();
     }
+
+    public List<Employe> findActiveEmployees(Session session) {
+        return session.createQuery(
+                        "FROM Employe employe "
+                                + "WHERE employe.actif = true "
+                                + "ORDER BY employe.nom, employe.prenom",
+                        Employe.class
+                )
+                .getResultList();
+    }
 }

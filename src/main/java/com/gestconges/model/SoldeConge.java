@@ -94,4 +94,10 @@ public class SoldeConge {
     public void setJoursPris(Integer joursPris) {
         this.joursPris = joursPris;
     }
+
+    public int getSoldeDisponible() {
+        int acquired = joursAcquis == null ? 0 : joursAcquis;
+        int taken = joursPris == null ? 0 : joursPris;
+        return acquired - taken;
+    }
 }

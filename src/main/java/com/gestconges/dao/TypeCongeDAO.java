@@ -37,4 +37,18 @@ public class TypeCongeDAO extends GenericDAO<TypeConge> {
         }
         return query.getSingleResult() > 0;
     }
+
+    public List<TypeConge> findActiveBalanceDeducting(
+            Session session
+    ) {
+        return session.createQuery(
+                        "FROM TypeConge typeConge "
+                                + "WHERE typeConge.actif = true "
+                                + "AND typeConge.decompteSolde = true "
+                                + "AND typeConge.joursParAn IS NOT NULL "
+                                + "ORDER BY typeConge.libelle",
+                        TypeConge.class
+                )
+                .getResultList();
+    }
 }

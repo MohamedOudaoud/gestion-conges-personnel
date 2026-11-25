@@ -273,6 +273,50 @@ class AuthenticationFlowTest {
     }
 
     @Test
+    void filterRejectsBalanceManagementForNonAdmin() throws Exception {
+        TestSession session = new TestSession(
+                Map.of("employeId", 42L, "employeRole", Role.EMPLOYE.name())
+        );
+        Fixture fixture = new Fixture(
+                "/admin/balances",
+                "GET",
+                session,
+                Map.of()
+        );
+
+        new AuthFilter().doFilter(
+                fixture.request,
+                fixture.response,
+                fixture.chain
+        );
+
+        assertEquals(HttpServletResponse.SC_FORBIDDEN, fixture.errorStatus);
+        assertFalse(fixture.chainCalled);
+    }
+
+    @Test
+    void filterAllowsBalanceManagementForAdmin() throws Exception {
+        TestSession session = new TestSession(
+                Map.of("employeId", 42L, "employeRole", Role.ADMIN.name())
+        );
+        Fixture fixture = new Fixture(
+                "/admin/balances/adjust",
+                "POST",
+                session,
+                Map.of()
+        );
+
+        new AuthFilter().doFilter(
+                fixture.request,
+                fixture.response,
+                fixture.chain
+        );
+
+        assertTrue(fixture.chainCalled);
+        assertNull(fixture.errorStatus);
+    }
+
+    @Test
     void dashboardEntryRedirectsToRoleSpecificDestination() throws Exception {
         TestSession session = new TestSession(
                 Map.of("employeId", 42L, "employeRole", Role.RESPONSABLE.name())

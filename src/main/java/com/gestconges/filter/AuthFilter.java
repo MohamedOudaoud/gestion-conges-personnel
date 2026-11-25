@@ -78,6 +78,8 @@ public class AuthFilter implements Filter {
                 || requestPath.equals("/admin/departments")
                 || requestPath.startsWith("/admin/departments/")
                 || requestPath.equals("/admin/leave-types")
-                || requestPath.startsWith("/admin/leave-types/");
+                || requestPath.startsWith("/admin/leave-types/")
+                || requestPath.equals("/admin/balances")
+                || requestPath.startsWith("/admin/balances/");
     }
 }
