@@ -1,6 +1,7 @@
 package com.gestconges.filter;
 
 import com.gestconges.controller.DashboardPaths;
+import com.gestconges.model.Role;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -42,6 +43,13 @@ public class AuthFilter implements Filter {
             return;
         }
 
+        if (isEmployeeManagementPath(requestPath)
+                && !Role.ADMIN.name().equals(
+                session.getAttribute("employeRole"))) {
+            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+
         String requiredRole = DashboardPaths.roleForPath(requestPath);
         if (requiredRole != null
                 && !requiredRole.equals(session.getAttribute("employeRole"))) {
@@ -62,5 +70,10 @@ public class AuthFilter implements Filter {
                 || requestPath.startsWith("/css/")
                 || requestPath.startsWith("/images/")
                 || requestPath.startsWith("/js/");
+    }
+
+    private boolean isEmployeeManagementPath(String requestPath) {
+        return requestPath.equals("/admin/employees")
+                || requestPath.startsWith("/admin/employees/");
     }
 }

@@ -11,6 +11,11 @@
         <h1>Espace administrateur</h1>
         <p>Bienvenue, <c:out value="${sessionScope.employePrenom}"/> <c:out value="${sessionScope.employeNom}"/>.</p>
         <p>Le tableau de bord est en cours de développement.</p>
+        <p>
+            <a href="${pageContext.request.contextPath}/admin/employees">
+                Gérer les employés
+            </a>
+        </p>
         <form action="${pageContext.request.contextPath}/logout" method="post">
             <button type="submit">Se déconnecter</button>
         </form>
