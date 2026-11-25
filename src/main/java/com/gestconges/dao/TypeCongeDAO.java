@@ -61,4 +61,13 @@ public class TypeCongeDAO extends GenericDAO<TypeConge> {
                 )
                 .getResultList();
     }
+
+    public long countActive(Session session) {
+        return session.createQuery(
+                        "SELECT COUNT(typeConge.id) FROM TypeConge typeConge "
+                                + "WHERE typeConge.actif = true",
+                        Long.class
+                )
+                .getSingleResult();
+    }
 }

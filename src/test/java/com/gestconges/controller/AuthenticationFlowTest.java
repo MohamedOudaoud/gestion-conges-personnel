@@ -426,6 +426,72 @@ class AuthenticationFlowTest {
     }
 
     @Test
+    void filterAllowsPersonalHistoryForEmployee() throws Exception {
+        TestSession session = new TestSession(
+                Map.of("employeId", 42L, "employeRole", Role.EMPLOYE.name())
+        );
+        Fixture fixture = new Fixture(
+                "/employee/leave-history",
+                "GET",
+                session,
+                Map.of()
+        );
+
+        new AuthFilter().doFilter(
+                fixture.request,
+                fixture.response,
+                fixture.chain
+        );
+
+        assertTrue(fixture.chainCalled);
+        assertNull(fixture.errorStatus);
+    }
+
+    @Test
+    void filterRejectsManagerHistoryForEmployee() throws Exception {
+        TestSession session = new TestSession(
+                Map.of("employeId", 42L, "employeRole", Role.EMPLOYE.name())
+        );
+        Fixture fixture = new Fixture(
+                "/manager/leave-history",
+                "GET",
+                session,
+                Map.of()
+        );
+
+        new AuthFilter().doFilter(
+                fixture.request,
+                fixture.response,
+                fixture.chain
+        );
+
+        assertEquals(HttpServletResponse.SC_FORBIDDEN, fixture.errorStatus);
+        assertFalse(fixture.chainCalled);
+    }
+
+    @Test
+    void filterAllowsAdminHistoryForAdmin() throws Exception {
+        TestSession session = new TestSession(
+                Map.of("employeId", 42L, "employeRole", Role.ADMIN.name())
+        );
+        Fixture fixture = new Fixture(
+                "/admin/leave-history",
+                "GET",
+                session,
+                Map.of()
+        );
+
+        new AuthFilter().doFilter(
+                fixture.request,
+                fixture.response,
+                fixture.chain
+        );
+
+        assertTrue(fixture.chainCalled);
+        assertNull(fixture.errorStatus);
+    }
+
+    @Test
     void dashboardEntryRedirectsToRoleSpecificDestination() throws Exception {
         TestSession session = new TestSession(
                 Map.of("employeId", 42L, "employeRole", Role.RESPONSABLE.name())

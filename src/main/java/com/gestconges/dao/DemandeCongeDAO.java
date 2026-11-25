@@ -106,4 +106,95 @@ public class DemandeCongeDAO extends GenericDAO<DemandeConge> {
                 .setParameter("pending", StatutDemande.EN_ATTENTE)
                 .getResultList();
     }
+
+    public List<DemandeConge> findHistory(
+            Session session,
+            Long employeeId,
+            Long managerId,
+            boolean allEmployees,
+            StatutDemande status,
+            Long leaveTypeId,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        StringBuilder hql = new StringBuilder(
+                "FROM DemandeConge demande "
+                        + "JOIN FETCH demande.employe employe "
+                        + "LEFT JOIN FETCH employe.manager "
+                        + "JOIN FETCH demande.typeConge typeConge "
+                        + "WHERE 1 = 1"
+        );
+
+        if (!allEmployees) {
+            if (employeeId != null) {
+                hql.append(" AND employe.id = :employeeId");
+            } else if (managerId != null) {
+                hql.append(" AND employe.manager.id = :managerId");
+            }
+        }
+        if (status != null) {
+            hql.append(" AND demande.statut = :status");
+        }
+        if (leaveTypeId != null) {
+            hql.append(" AND typeConge.id = :leaveTypeId");
+        }
+        if (startDate != null) {
+            hql.append(" AND demande.dateDebut >= :startDate");
+        }
+        if (endDate != null) {
+            hql.append(" AND demande.dateFin <= :endDate");
+        }
+        hql.append(" ORDER BY demande.dateDemande DESC");
+
+        var query = session.createQuery(hql.toString(), DemandeConge.class);
+        if (!allEmployees) {
+            if (employeeId != null) {
+                query.setParameter("employeeId", employeeId);
+            } else if (managerId != null) {
+                query.setParameter("managerId", managerId);
+            }
+        }
+        if (status != null) {
+            query.setParameter("status", status);
+        }
+        if (leaveTypeId != null) {
+            query.setParameter("leaveTypeId", leaveTypeId);
+        }
+        if (startDate != null) {
+            query.setParameter("startDate", startDate);
+        }
+        if (endDate != null) {
+            query.setParameter("endDate", endDate);
+        }
+        return query.getResultList();
+    }
+
+    public long countByStatus(
+            Session session,
+            StatutDemande status,
+            Long employeeId,
+            Long managerId,
+            boolean allEmployees
+    ) {
+        String hql = "SELECT COUNT(demande.id) FROM DemandeConge demande "
+                + "WHERE demande.statut = :status";
+        if (!allEmployees) {
+            if (employeeId != null) {
+                hql += " AND demande.employe.id = :employeeId";
+            } else if (managerId != null) {
+                hql += " AND demande.employe.manager.id = :managerId";
+            }
+        }
+
+        var query = session.createQuery(hql, Long.class)
+                .setParameter("status", status);
+        if (!allEmployees) {
+            if (employeeId != null) {
+                query.setParameter("employeeId", employeeId);
+            } else if (managerId != null) {
+                query.setParameter("managerId", managerId);
+            }
+        }
+        return query.getSingleResult();
+    }
 }

@@ -10,7 +10,18 @@
     <main>
         <h1>Espace employé</h1>
         <p>Bienvenue, <c:out value="${sessionScope.employePrenom}"/> <c:out value="${sessionScope.employeNom}"/>.</p>
-        <p>Le tableau de bord est en cours de développement.</p>
+        <c:if test="${not empty dashboardSummary}">
+            <p>
+                En attente : <strong>${dashboardSummary.pending}</strong>
+                | Acceptées : <strong>${dashboardSummary.accepted}</strong>
+                | Refusées : <strong>${dashboardSummary.rejected}</strong>
+            </p>
+        </c:if>
+        <p>
+            <a href="${pageContext.request.contextPath}/employee/leave-history">
+                Consulter mon historique
+            </a>
+        </p>
         <p>
             <a href="${pageContext.request.contextPath}/employee/leave-requests">
                 Mes demandes de congé

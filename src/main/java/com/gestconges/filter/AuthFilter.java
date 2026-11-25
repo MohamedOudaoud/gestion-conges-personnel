@@ -57,6 +57,20 @@ public class AuthFilter implements Filter {
             return;
         }
 
+        if (isManagerHistoryPath(requestPath)
+                && !Role.RESPONSABLE.name().equals(
+                session.getAttribute("employeRole"))) {
+            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+
+        if (isAdminHistoryPath(requestPath)
+                && !Role.ADMIN.name().equals(
+                session.getAttribute("employeRole"))) {
+            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+
         String requiredRole = DashboardPaths.roleForPath(requestPath);
         if (requiredRole != null
                 && !requiredRole.equals(session.getAttribute("employeRole"))) {
@@ -95,5 +109,15 @@ public class AuthFilter implements Filter {
     private boolean isManagerApprovalPath(String requestPath) {
         return requestPath.equals("/manager/leave-requests")
                 || requestPath.startsWith("/manager/leave-requests/");
+    }
+
+    private boolean isManagerHistoryPath(String requestPath) {
+        return requestPath.equals("/manager/leave-history")
+                || requestPath.startsWith("/manager/leave-history/");
+    }
+
+    private boolean isAdminHistoryPath(String requestPath) {
+        return requestPath.equals("/admin/leave-history")
+                || requestPath.startsWith("/admin/leave-history/");
     }
 }

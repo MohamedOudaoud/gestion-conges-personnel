@@ -10,7 +10,18 @@
     <main>
         <h1>Espace administrateur</h1>
         <p>Bienvenue, <c:out value="${sessionScope.employePrenom}"/> <c:out value="${sessionScope.employeNom}"/>.</p>
-        <p>Le tableau de bord est en cours de développement.</p>
+        <c:if test="${not empty dashboardSummary}">
+            <p>
+                Employés actifs : <strong>${dashboardSummary.activeEmployees}</strong>
+                | Types actifs : <strong>${dashboardSummary.activeLeaveTypes}</strong>
+                | Demandes en attente : <strong>${dashboardSummary.pending}</strong>
+            </p>
+        </c:if>
+        <p>
+            <a href="${pageContext.request.contextPath}/admin/leave-history">
+                Consulter tout l'historique
+            </a>
+        </p>
         <p>
             <a href="${pageContext.request.contextPath}/admin/employees">
                 Gérer les employés

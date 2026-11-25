@@ -122,4 +122,13 @@ public class EmployeDAO extends GenericDAO<Employe> {
                 )
                 .getResultList();
     }
+
+    public long countActive(Session session) {
+        return session.createQuery(
+                        "SELECT COUNT(employe.id) FROM Employe employe "
+                                + "WHERE employe.actif = true",
+                        Long.class
+                )
+                .getSingleResult();
+    }
 }
