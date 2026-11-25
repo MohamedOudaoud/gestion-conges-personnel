@@ -20,6 +20,7 @@ public class DemandeCongeDAO extends GenericDAO<DemandeConge> {
         return session.createQuery(
                         "FROM DemandeConge demande "
                                 + "JOIN FETCH demande.employe employe "
+                                + "LEFT JOIN FETCH employe.manager "
                                 + "JOIN FETCH demande.typeConge typeConge "
                                 + "WHERE employe.id = :employeeId "
                                 + "ORDER BY demande.dateDemande DESC",
@@ -36,6 +37,7 @@ public class DemandeCongeDAO extends GenericDAO<DemandeConge> {
         return session.createQuery(
                         "FROM DemandeConge demande "
                                 + "JOIN FETCH demande.employe employe "
+                                + "LEFT JOIN FETCH employe.manager "
                                 + "JOIN FETCH demande.typeConge typeConge "
                                 + "WHERE demande.id = :id",
                         DemandeConge.class
@@ -70,5 +72,38 @@ public class DemandeCongeDAO extends GenericDAO<DemandeConge> {
             query.setParameter("excludedRequestId", excludedRequestId);
         }
         return query.getSingleResult() > 0;
+    }
+
+    public List<DemandeConge> findPendingForManager(
+            Session session,
+            Long managerId
+    ) {
+        return session.createQuery(
+                        "FROM DemandeConge demande "
+                                + "JOIN FETCH demande.employe employe "
+                                + "JOIN FETCH demande.typeConge typeConge "
+                                + "WHERE demande.statut = :pending "
+                                + "AND employe.manager.id = :managerId "
+                                + "ORDER BY demande.dateDemande",
+                        DemandeConge.class
+                )
+                .setParameter("pending", StatutDemande.EN_ATTENTE)
+                .setParameter("managerId", managerId)
+                .getResultList();
+    }
+
+    public List<DemandeConge> findAllPending(
+            Session session
+    ) {
+        return session.createQuery(
+                        "FROM DemandeConge demande "
+                                + "JOIN FETCH demande.employe employe "
+                                + "JOIN FETCH demande.typeConge typeConge "
+                                + "WHERE demande.statut = :pending "
+                                + "ORDER BY demande.dateDemande",
+                        DemandeConge.class
+                )
+                .setParameter("pending", StatutDemande.EN_ATTENTE)
+                .getResultList();
     }
 }

@@ -2,6 +2,7 @@ package com.gestconges.service;
 
 import com.gestconges.model.DemandeConge;
 import com.gestconges.model.Employe;
+import com.gestconges.model.Role;
 import com.gestconges.model.StatutDemande;
 import org.junit.jupiter.api.Test;
 
@@ -118,6 +119,98 @@ class DemandeCongeServiceTest {
         );
         assertTrue(
                 exception.getCause() instanceof IllegalArgumentException
+        );
+    }
+
+    @Test
+    void rejectionRequiresComment() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> DemandeCongeService.validateRejectionComment(" ")
+        );
+    }
+
+    @Test
+    void rejectionCommentCannotExceedDatabaseLimit() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> DemandeCongeService.validateRejectionComment(
+                        "C".repeat(1001)
+                )
+        );
+    }
+
+    @Test
+    void approvalRejectsInsufficientBalance() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> DemandeCongeService.validateApprovalCapacity(5, 3, 3)
+        );
+    }
+
+    @Test
+    void approvalAllowsAvailableBalance() {
+        org.junit.jupiter.api.Assertions.assertDoesNotThrow(
+                () -> DemandeCongeService.validateApprovalCapacity(5, 3, 2)
+        );
+    }
+
+    @Test
+    void directManagerCanDecideDirectTeamRequest() {
+        Employe manager = new Employe();
+        manager.setId(10L);
+        manager.setRole(Role.RESPONSABLE);
+
+        Employe employee = new Employe();
+        employee.setId(20L);
+        employee.setManager(manager);
+
+        DemandeConge request = new DemandeConge();
+        request.setEmploye(employee);
+
+        org.junit.jupiter.api.Assertions.assertDoesNotThrow(
+                () -> DemandeCongeService.validateDecisionScope(
+                        request,
+                        manager
+                )
+        );
+    }
+
+    @Test
+    void employeeCannotDecideOwnRequest() {
+        Employe employee = new Employe();
+        employee.setId(20L);
+        employee.setRole(Role.ADMIN);
+
+        DemandeConge request = new DemandeConge();
+        request.setEmploye(employee);
+
+        assertThrows(
+                SecurityException.class,
+                () -> DemandeCongeService.validateDecisionScope(
+                        request,
+                        employee
+                )
+        );
+    }
+
+    @Test
+    void administratorCanDecideAnyRequest() {
+        Employe employee = new Employe();
+        employee.setId(20L);
+
+        Employe administrator = new Employe();
+        administrator.setId(30L);
+        administrator.setRole(Role.ADMIN);
+
+        DemandeConge request = new DemandeConge();
+        request.setEmploye(employee);
+
+        org.junit.jupiter.api.Assertions.assertDoesNotThrow(
+                () -> DemandeCongeService.validateDecisionScope(
+                        request,
+                        administrator
+                )
         );
     }
 }

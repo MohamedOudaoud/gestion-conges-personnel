@@ -16,6 +16,11 @@
                 Mes demandes de congé
             </a>
         </p>
+        <p>
+            <a href="${pageContext.request.contextPath}/manager/leave-requests">
+                Valider les demandes de mon équipe
+            </a>
+        </p>
         <form action="${pageContext.request.contextPath}/logout" method="post">
             <button type="submit">Se déconnecter</button>
         </form>
