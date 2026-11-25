@@ -1,6 +1,7 @@
 package com.gestconges.dao;
 
 import com.gestconges.model.Employe;
+import com.gestconges.model.Role;
 import org.hibernate.Session;
 
 import java.util.List;
@@ -82,4 +83,33 @@ public class EmployeDAO extends GenericDAO<Employe> {
         return query.uniqueResult() > 0;
     }
 
+    public List<Employe> findByDepartmentWithManager(
+            Session session,
+            Long departmentId
+    ) {
+        return session.createQuery(
+                        "FROM Employe e LEFT JOIN FETCH e.manager "
+                                + "WHERE e.departement.id = :departmentId "
+                                + "ORDER BY e.nom, e.prenom",
+                        Employe.class
+                )
+                .setParameter("departmentId", departmentId)
+                .getResultList();
+    }
+
+    public List<Employe> findActiveManagersByDepartment(
+            Session session,
+            Long departmentId
+    ) {
+        return session.createQuery(
+                        "FROM Employe e "
+                                + "WHERE e.departement.id = :departmentId "
+                                + "AND e.role = :role AND e.actif = true "
+                                + "ORDER BY e.nom, e.prenom",
+                        Employe.class
+                )
+                .setParameter("departmentId", departmentId)
+                .setParameter("role", Role.RESPONSABLE)
+                .getResultList();
+    }
 }

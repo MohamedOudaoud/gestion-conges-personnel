@@ -16,6 +16,11 @@
                 Gérer les employés
             </a>
         </p>
+        <p>
+            <a href="${pageContext.request.contextPath}/admin/departments">
+                Gérer les départements
+            </a>
+        </p>
         <form action="${pageContext.request.contextPath}/logout" method="post">
             <button type="submit">Se déconnecter</button>
         </form>

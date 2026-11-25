@@ -43,7 +43,7 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        if (isEmployeeManagementPath(requestPath)
+        if (isAdminManagementPath(requestPath)
                 && !Role.ADMIN.name().equals(
                 session.getAttribute("employeRole"))) {
             httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
@@ -72,8 +72,10 @@ public class AuthFilter implements Filter {
                 || requestPath.startsWith("/js/");
     }
 
-    private boolean isEmployeeManagementPath(String requestPath) {
+    private boolean isAdminManagementPath(String requestPath) {
         return requestPath.equals("/admin/employees")
-                || requestPath.startsWith("/admin/employees/");
+                || requestPath.startsWith("/admin/employees/")
+                || requestPath.equals("/admin/departments")
+                || requestPath.startsWith("/admin/departments/");
     }
 }

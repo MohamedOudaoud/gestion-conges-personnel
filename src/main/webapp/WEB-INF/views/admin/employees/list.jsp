@@ -99,6 +99,10 @@
        href="${pageContext.request.contextPath}/dashboard/admin">
         Retour au tableau de bord
     </a>
+    <a class="btn btn-link px-0"
+       href="${pageContext.request.contextPath}/admin/departments">
+        Gérer les départements
+    </a>
 </main>
 </body>
 </html>
