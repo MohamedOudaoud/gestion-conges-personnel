@@ -31,6 +31,11 @@
                 Gérer les soldes de congé
             </a>
         </p>
+        <p>
+            <a href="${pageContext.request.contextPath}/employee/leave-requests">
+                Mes demandes de congé
+            </a>
+        </p>
         <form action="${pageContext.request.contextPath}/logout" method="post">
             <button type="submit">Se déconnecter</button>
         </form>

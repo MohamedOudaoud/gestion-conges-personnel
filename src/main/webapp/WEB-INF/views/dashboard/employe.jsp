@@ -11,6 +11,11 @@
         <h1>Espace employé</h1>
         <p>Bienvenue, <c:out value="${sessionScope.employePrenom}"/> <c:out value="${sessionScope.employeNom}"/>.</p>
         <p>Le tableau de bord est en cours de développement.</p>
+        <p>
+            <a href="${pageContext.request.contextPath}/employee/leave-requests">
+                Mes demandes de congé
+            </a>
+        </p>
         <form action="${pageContext.request.contextPath}/logout" method="post">
             <button type="submit">Se déconnecter</button>
         </form>

@@ -51,4 +51,14 @@ public class TypeCongeDAO extends GenericDAO<TypeConge> {
                 )
                 .getResultList();
     }
+
+    public List<TypeConge> findActiveTypes(Session session) {
+        return session.createQuery(
+                        "FROM TypeConge typeConge "
+                                + "WHERE typeConge.actif = true "
+                                + "ORDER BY typeConge.libelle",
+                        TypeConge.class
+                )
+                .getResultList();
+    }
 }

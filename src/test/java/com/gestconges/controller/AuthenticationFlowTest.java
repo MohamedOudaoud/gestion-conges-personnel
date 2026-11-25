@@ -317,6 +317,49 @@ class AuthenticationFlowTest {
     }
 
     @Test
+    void filterAllowsEmployeeLeaveRequestsForAuthenticatedEmployee()
+            throws Exception {
+        TestSession session = new TestSession(
+                Map.of("employeId", 42L, "employeRole", Role.EMPLOYE.name())
+        );
+        Fixture fixture = new Fixture(
+                "/employee/leave-requests",
+                "GET",
+                session,
+                Map.of()
+        );
+
+        new AuthFilter().doFilter(
+                fixture.request,
+                fixture.response,
+                fixture.chain
+        );
+
+        assertTrue(fixture.chainCalled);
+        assertNull(fixture.errorStatus);
+    }
+
+    @Test
+    void filterRedirectsUnauthenticatedEmployeeLeaveRequestsToLogin()
+            throws Exception {
+        Fixture fixture = new Fixture(
+                "/employee/leave-requests",
+                "GET",
+                null,
+                Map.of()
+        );
+
+        new AuthFilter().doFilter(
+                fixture.request,
+                fixture.response,
+                fixture.chain
+        );
+
+        assertEquals("/gestconges/login", fixture.redirect);
+        assertFalse(fixture.chainCalled);
+    }
+
+    @Test
     void dashboardEntryRedirectsToRoleSpecificDestination() throws Exception {
         TestSession session = new TestSession(
                 Map.of("employeId", 42L, "employeRole", Role.RESPONSABLE.name())
